@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -45,6 +46,27 @@ public class UserController {
         return service.list(page, size, sort);
     }
 
+    @GetMapping("/{id}/followers")
+    public Page<UserDto> listFollowers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @PathVariable Long id
+    ){
+        return service.listFollower(id, page, size, sort);
+    }
+
+    @GetMapping("/{id}/subscribe")
+    public Page<UserDto> listSubscriber(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @PathVariable Long id
+    ){
+        return service.listSubscriber(id, page, size, sort);
+    }
+
+
     @PatchMapping("/follow/{followerId}")
     public String follow(@AuthenticationPrincipal UserDetailsImpl subscriber, @PathVariable Long followerId){
         Long subscriberId = subscriber.getUser().getId();
@@ -72,5 +94,7 @@ public class UserController {
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
+
+
 
 }
