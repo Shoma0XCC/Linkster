@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -20,6 +23,9 @@ public class UserEntity {
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(nullable = false, unique = true, length = 254)
     private String email;
 
@@ -32,7 +38,18 @@ public class UserEntity {
     @Column(name = "status", length = 150)
     private String status;
 
-    protected UserEntity() {}
+    @ManyToMany
+    @JoinTable(
+            name="user_subscriptions",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "followed_id")
+    )
+    private Set<UserEntity> subscriptions = new HashSet<>();
+
+    @ManyToMany(mappedBy = "subscriptions")
+    private Set<UserEntity> followers = new HashSet<>();
+
+    public UserEntity() {}
 
     public UserEntity(String username, String email, String firstName, String lastName, String status) {
         this.username = username;
