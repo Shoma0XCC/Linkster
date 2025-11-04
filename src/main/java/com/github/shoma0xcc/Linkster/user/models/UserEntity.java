@@ -58,5 +58,11 @@ public class UserEntity {
         this.lastName = lastName;
         this.status = status;
     }
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserEntity other)) return false;
+        return id != null && id.equals(other.id);
+    }
+    @Override public int hashCode() { return 31; }
 
 }

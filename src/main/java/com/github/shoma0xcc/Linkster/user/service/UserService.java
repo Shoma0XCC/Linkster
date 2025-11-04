@@ -9,11 +9,15 @@ import com.github.shoma0xcc.Linkster.user.models.UserEntity;
 import com.github.shoma0xcc.Linkster.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +26,6 @@ public class UserService {
 
     @Transactional
     public UserDto create(UserCreateRequest req) {
-        // примитивная защита от дублей
         if (repository.existsByUsername(req.username())) {
             throw new IllegalArgumentException("Username already taken");
         }
@@ -63,4 +66,30 @@ public class UserService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+
+    @Transactional
+    public String follow(Long subscriberId, Long followerId){
+        if (subscriberId.equals(followerId)) {
+            throw new IllegalArgumentException("You cannot follow yourself");
+        }
+        UserEntity subscriber = repository.findById(subscriberId).orElseThrow();
+        UserEntity follower   = repository.findById(followerId).orElseThrow();
+        if (follower.getSubscriptions().contains(subscriber)) {
+            return "Already following " + subscriber.getUsername();
+        }
+        follower.getSubscriptions().add(subscriber);
+        subscriber.getFollowers().add(follower);
+        return "You follow to " + follower.getUsername();
+    }
+
+    @Transactional
+    public String unFollow(Long subscriberId, Long followerId){
+        if (subscriberId.equals(followerId)) return "Nothing to do";
+        UserEntity subscriber = repository.findById(subscriberId).orElseThrow();
+        UserEntity follower   = repository.findById(followerId).orElseThrow();
+        boolean removed = follower.getSubscriptions().remove(subscriber);
+        if (removed) subscriber.getFollowers().remove(follower);
+        return removed ? "Unfollowed " + follower.getUsername() : "You were not following";
+    }
+
 }

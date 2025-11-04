@@ -2,6 +2,8 @@ package com.github.shoma0xcc.Linkster.user.mapper;
 import com.github.shoma0xcc.Linkster.user.dto.*;
 import com.github.shoma0xcc.Linkster.user.models.UserEntity;
 
+import java.util.Set;
+
 
 public class UserMapper {
     public static UserDto toDto(UserEntity m) {
@@ -23,5 +25,9 @@ public class UserMapper {
         if (r.firstName()!= null) m.setFirstName(r.firstName());
         if (r.lastName() != null) m.setLastName(r.lastName());
         if (r.status()   != null) m.setStatus(r.status());
+    }
+    public static void followToUser(UserEntity follower, UserEntity subscriber){
+        follower.setFollowers((Set<UserEntity>) subscriber);
+        subscriber.setSubscriptions((Set<UserEntity>) follower);
     }
 }

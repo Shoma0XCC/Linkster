@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Оставляю твою логику как есть:
-                        .requestMatchers("/secured/**").fullyAuthenticated()
+                        .requestMatchers("/secured/**").authenticated()
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().permitAll()
                 )
