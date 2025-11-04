@@ -1,10 +1,12 @@
 package com.github.shoma0xcc.Linkster.user.controller;
 
+import com.github.shoma0xcc.Linkster.auth.user.UserDetailsImpl;
 import com.github.shoma0xcc.Linkster.user.dto.*;
 import com.github.shoma0xcc.Linkster.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -41,6 +43,18 @@ public class UserController {
             @RequestParam(defaultValue = "id") String sort
     ) {
         return service.list(page, size, sort);
+    }
+
+    @PatchMapping("/follow/{followerId}")
+    public String follow(@AuthenticationPrincipal UserDetailsImpl subscriber, @PathVariable Long followerId){
+        Long subscriberId = subscriber.getUser().getId();
+        return service.follow(subscriberId, followerId);
+    }
+
+    @PatchMapping("/un_follow/{followerId}")
+    public String unFollow(@AuthenticationPrincipal UserDetailsImpl subscriber, @PathVariable Long followerId){
+        Long subscriberId = subscriber.getUser().getId();
+        return service.unFollow(subscriberId, followerId);
     }
 
     @PutMapping("/{id}")
