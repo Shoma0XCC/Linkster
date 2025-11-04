@@ -27,6 +27,13 @@ public class UserController {
         return service.get(id);
     }
 
+
+//    @GetMapping("/{id}")
+//    public UserDto followToUser(@PathVariable Long id){
+//        return service.follow();
+//    }
+
+
     @GetMapping
     public Page<UserDto> list(
             @RequestParam(defaultValue = "0") int page,

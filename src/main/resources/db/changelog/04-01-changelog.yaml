@@ -1,0 +1,116 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1762245372359-1
+      author: shamil
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createSequence:
+            incrementBy: 1
+            sequenceName: users_id_seq
+            startValue: 1
+  - changeSet:
+      id: 1762245372359-2
+      author: shamil
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user_subscriptions
+                  name: followed_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user_subscriptions
+                  name: follower_id
+                  type: BIGINT
+            tableName: user_subscriptions
+  - changeSet:
+      id: 1762245372359-3
+      author: shamil
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: VARCHAR(50)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: email
+                  type: VARCHAR(254)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: first_name
+                  type: VARCHAR(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: last_name
+                  type: VARCHAR(100)
+              - column:
+                  name: status
+                  type: VARCHAR(150)
+            tableName: users
+  - changeSet:
+      id: 1762245372359-4
+      author: shamil
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: email
+            constraintName: uc_users_email
+            tableName: users
+  - changeSet:
+      id: 1762245372359-5
+      author: shamil
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: username
+            constraintName: uc_users_username
+            tableName: users
+  - changeSet:
+      id: 1762245372359-6
+      author: shamil
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: followed_id
+            baseTableName: user_subscriptions
+            constraintName: fk_usesub_on_followed
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1762245372359-7
+      author: shamil
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: follower_id
+            baseTableName: user_subscriptions
+            constraintName: fk_usesub_on_follower
+            referencedColumnNames: id
+            referencedTableName: users
+
