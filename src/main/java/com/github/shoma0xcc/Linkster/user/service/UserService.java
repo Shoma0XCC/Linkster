@@ -9,15 +9,13 @@ import com.github.shoma0xcc.Linkster.user.models.UserEntity;
 import com.github.shoma0xcc.Linkster.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -90,6 +88,32 @@ public class UserService {
         boolean removed = follower.getSubscriptions().remove(subscriber);
         if (removed) subscriber.getFollowers().remove(follower);
         return removed ? "Unfollowed " + follower.getUsername() : "You were not following";
+    }
+
+    @Transactional
+    public Page<UserDto> listFollower(Long id, int page, int size, String sort){
+        Sort sorts = Sort.by(
+                (sort != null && sort.contains(","))
+                        ? Sort.Order.by(sort.split(",")[0]).with(
+                        "desc".equalsIgnoreCase(sort.split(",")[1]) ? Sort.Direction.DESC : Sort.Direction.ASC
+                )
+                        : Sort.Order.asc(sort == null ? "username" : sort)
+        );
+        Pageable pageable = PageRequest.of(page, size, sorts);
+        return repository.findAllByFollowers_Id(id, pageable).map(UserMapper::toDto);
+    }
+
+    @Transactional
+    public Page<UserDto> listSubscriber(Long id, int page, int size, String sort){
+        Sort sorts = Sort.by(
+                (sort != null && sort.contains(","))
+                        ? Sort.Order.by(sort.split(",")[0]).with(
+                        "desc".equalsIgnoreCase(sort.split(",")[1]) ? Sort.Direction.DESC : Sort.Direction.ASC
+                )
+                        : Sort.Order.asc(sort == null ? "username" : sort)
+        );
+        Pageable pageable = PageRequest.of(page, size, sorts);
+        return repository.findAllBySubscriptions_Id(id, pageable).map(UserMapper::toDto);
     }
 
 }
